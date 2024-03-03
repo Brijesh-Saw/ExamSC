@@ -1,0 +1,53 @@
+import pandas as pd
+url = "https://raw.githubusercontent.com/jigsawlabs-student/pytorch-intro-curriculum/main/5-training-mathematically/cell_multiple.csv"
+df = pd.read_csv(url)
+df[:2]
+import torch
+X_tensor = torch.tensor(df[['mean_area', 'mean_concavity']].values).float()
+y_tensor = torch.tensor(df['is_cancerous']).float()
+first_x = X_tensor[0]
+first_y = y_tensor[0]
+
+first_x, first_y
+def linear_fn(x, w, b):
+    return x @ w + b
+def activation_fn(z):
+    return torch.sigmoid(z)
+
+w = torch.tensor([.5, .3]).float()
+b = torch.tensor(-2.).float()
+
+z = linear_fn(first_x, w, b)
+z
+y_hat = activation_fn(z)
+y_hat
+import torch
+def delta_J_delta_sigma(y_hat, y):
+    return torch.sum(2*(y_hat - y))
+def delta_sigma_delta(z):
+    return torch.sigmoid(z)*(1 - torch.sigmoid(z))
+
+def delta_z_delta_w(x):
+    return x
+
+def delta_z_delta_b():
+    return 1
+
+w_grad = delta_z_delta_w(first_x)*delta_sigma_delta(z)*delta_J_delta_sigma(y_hat, first_y)
+w_grad
+b_grad = delta_z_delta_b()*delta_sigma_delta(z)*delta_J_delta_sigma(y_hat, first_y)
+b_grad
+
+dj_dsig = delta_J_delta_sigma(y_hat, first_y)
+dj_dsig
+dsig_dz = delta_sigma_delta(z)
+dz_dJ = dsig_dz*dj_dsig
+dz_dJ
+dz_dw = delta_z_delta_w(first_x)
+dw_dJ = dz_dw*dz_dJ
+dw_dJ
+
+dj_dsig*dsig_dz*dz_dw
+
+dJ_db = dz_dw*dz_dJ
+dz_dw
